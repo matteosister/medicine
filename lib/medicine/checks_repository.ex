@@ -46,7 +46,8 @@ defmodule Medicine.ChecksRepository do
   end
 
   def handle_cast({:update_status, new_check}, checks) do
-    Medicine.Endpoint.broadcast!("checks:all", "update_status", new_check)
+    # TODO: remove this hardcoded reference
+    MedicineWeb.Endpoint.broadcast!("checks:all", "update_status", new_check)
     other_checks = Enum.reject(checks, fn (c) -> c.callback == new_check.callback end)
     {:noreply, [new_check|other_checks]}
   end
