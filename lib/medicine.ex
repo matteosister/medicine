@@ -1,0 +1,2 @@
+defmodule Medicine do
+end
