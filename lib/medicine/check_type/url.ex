@@ -9,6 +9,9 @@ defmodule Medicine.CheckType.Url do
     end
   end
 
+  @doc """
+  given an url returns :ok for a status code of 20*, otherwise :error
+  """
   def get_response(url) do
     try do
       response = HTTPotion.get(url)
