@@ -1,16 +1,16 @@
 defmodule Medicine.Check do
   require Logger
 
-  defstruct id: nil, callback: nil, name: nil, frequency: 10, status: :waiting,
+  defstruct id: nil, module: nil, name: nil, frequency: 10, status: :waiting,
     description: nil
 
   @doc """
   creates a new instance of %Medicine.Check struct
   """
-  def new(callback, status \\ :waiting) do
-    %Medicine.Check{id: UUID.uuid4(), callback: callback, name: callback.name,
-      frequency: callback.frequency, status: status,
-      description: callback.description}
+  def new(module, status \\ :waiting) do
+    %Medicine.Check{id: UUID.uuid4(), module: module, name: module.name,
+      frequency: module.frequency, status: status,
+      description: module.description}
   end
 
   @doc """

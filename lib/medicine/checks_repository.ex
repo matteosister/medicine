@@ -46,15 +46,16 @@ defmodule Medicine.ChecksRepository do
   end
 
   def handle_cast({:update_status, new_check}, checks) do
-    # TODO: remove this hardcoded reference
-    MedicineWeb.Endpoint.broadcast!("checks:all", "update_status", new_check)
-    other_checks = Enum.reject(checks, fn (c) -> c.callback == new_check.callback end)
+    if function_exported?(new_check.module, :callback, 1) do
+      apply(new_check.module, :callback, [new_check])
+    end
+    other_checks = Enum.reject(checks, fn (c) -> c.module == new_check.module end)
     {:noreply, [new_check|other_checks]}
   end
 
   def handle_call({:get_status, check}, _from, checks) do
     IO.inspect checks
-    the_check = Enum.find checks, nil, fn (c) -> c.callback == check.callback end
+    the_check = Enum.find checks, nil, fn (c) -> c.module == check.module end
     case the_check do
       nil -> {:noreply, checks}
       {status, _} -> {:reply, status, checks}
@@ -65,9 +66,9 @@ defmodule Medicine.ChecksRepository do
     {:reply, checks, checks}
   end
 
-  defp init_timer(check = %Check{name: name, callback: callback}) do
+  defp init_timer(check = %Check{name: name, module: module}) do
     Logger.log(:debug, "Checks - initialize timer for check \"#{name}\" every #{check.frequency} seconds")
-    :timer.apply_interval(check.frequency * 1000, callback, :run, [check])
+    :timer.apply_interval(check.frequency * 1000, module, :run, [check])
     check
   end
 end
