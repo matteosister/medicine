@@ -24,7 +24,11 @@ defmodule Medicine.ChecksRepository do
     GenServer.cast :checks, {:add, check}
   end
 
-  def update_status(check) do
+  def updated_status(check) do
+    GenServer.cast :checks, {:updated_status, check}
+  end
+
+  def do_update_status(check) do
     GenServer.cast :checks, {:update_status, check}
   end
 
@@ -45,7 +49,7 @@ defmodule Medicine.ChecksRepository do
     {:noreply, [check|checks]}
   end
 
-  def handle_cast({:update_status, new_check}, checks) do
+  def handle_cast({:updated_status, new_check}, checks) do
     if function_exported?(new_check.module, :callback, 1) do
       apply(new_check.module, :callback, [new_check])
     end
@@ -53,8 +57,12 @@ defmodule Medicine.ChecksRepository do
     {:noreply, [new_check|other_checks]}
   end
 
+  def handle_cast({:update_status, check = %Check{module: module}}, checks) do
+    module.run(check)
+    {:noreply, checks}
+  end
+
   def handle_call({:get_status, check}, _from, checks) do
-    IO.inspect checks
     the_check = Enum.find checks, nil, fn (c) -> c.module == check.module end
     case the_check do
       nil -> {:noreply, checks}
@@ -68,6 +76,7 @@ defmodule Medicine.ChecksRepository do
 
   defp init_timer(check = %Check{name: name, module: module}) do
     Logger.log(:debug, "Checks - initialize timer for check \"#{name}\" every #{check.frequency} seconds")
+    GenServer.cast(:checks, {:update_status, check})
     :timer.apply_interval(check.frequency * 1000, module, :run, [check])
     check
   end

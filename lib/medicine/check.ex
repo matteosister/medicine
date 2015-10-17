@@ -2,7 +2,7 @@ defmodule Medicine.Check do
   require Logger
 
   defstruct id: nil, module: nil, name: nil, frequency: 10, status: :waiting,
-    description: nil
+    description: nil, last_check_date: nil
 
   @doc """
   creates a new instance of %Medicine.Check struct
@@ -35,7 +35,8 @@ defmodule Medicine.Check do
         {{year, month, day}, {hour, minute, sec}} = :calendar.local_time()
         exec_time = "#{day}/#{month}/#{year} #{hour}:#{minute}:#{sec}"
         Logger.log(:debug, "#{exec_time} - #{__MODULE__} - checking")
-        Medicine.ChecksRepository.update_status(do_check(check))
+        new_check = %{do_check(check) | last_check_date: "#{year}-#{month}-#{day} #{hour}:#{minute}:#{sec}"}
+        Medicine.ChecksRepository.updated_status(new_check)
       end
     end
   end
@@ -53,8 +54,8 @@ defmodule Medicine.Check do
 end
 
 defimpl Poison.Encoder, for: Medicine.Check do
-  def encode(%Medicine.Check{id: id, name: name, status: status, description: description}, _options) do
-    %{id: id, name: name, status: status, description: description}
+  def encode(%Medicine.Check{id: id, name: name, status: status, description: description, last_check_date: last_check_date}, _options) do
+    %{id: id, name: name, status: status, description: description, last_check_date: last_check_date}
     |> Poison.Encoder.encode([])
   end
 end
