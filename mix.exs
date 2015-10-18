@@ -4,8 +4,6 @@ defmodule Medicine.Mixfile do
   def project do
     [app: :medicine,
      version: "0.0.1",
-     deps_path: "../../deps",
-     lockfile: "../../mix.lock",
      elixir: "~> 1.1",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -34,10 +32,8 @@ defmodule Medicine.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [
-      {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
-      {:httpotion, "~> 2.1.0"},
-      {:uuid, "~> 1.0"}
-    ]
+    [{:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+     {:httpotion, "~> 2.1.0"},
+     {:uuid, "~> 1.0"}]
   end
 end

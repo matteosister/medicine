@@ -53,9 +53,9 @@ defmodule Medicine.Check do
   end
 end
 
-defimpl Poison.Encoder, for: Medicine.Check do
-  def encode(%Medicine.Check{id: id, name: name, status: status, description: description, last_check_date: last_check_date}, _options) do
-    %{id: id, name: name, status: status, description: description, last_check_date: last_check_date}
-    |> Poison.Encoder.encode([])
-  end
-end
+# defimpl Poison.Encoder, for: Medicine.Check do
+#   def encode(%Medicine.Check{id: id, name: name, status: status, description: description, last_check_date: last_check_date}, _options) do
+#     %{id: id, name: name, status: status, description: description, last_check_date: last_check_date}
+#     |> Poison.Encoder.encode([])
+#   end
+# end
