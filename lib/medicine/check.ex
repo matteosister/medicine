@@ -8,9 +8,22 @@ defmodule Medicine.Check do
   creates a new instance of %Medicine.Check struct
   """
   def new(module, status \\ :waiting) do
+    check_function(module, :name, 0)
     %Medicine.Check{id: UUID.uuid4(), module: module, name: module.name,
       frequency: module.frequency, status: status,
       description: module.description}
+  end
+
+  @doc """
+  raise an exception if the function with the given arity doesn't
+  exists in the given module
+  """
+  def check_function(module, function, arity) do
+    unless function_exported?(module, function, arity) do
+      error = "To implement a check you should implement the function"
+        <> " '#{function}' in your '#{module}' module"
+      raise error
+    end
   end
 
   @doc """
@@ -35,6 +48,7 @@ defmodule Medicine.Check do
         {{year, month, day}, {hour, minute, sec}} = :calendar.local_time()
         exec_time = "#{day}/#{month}/#{year} #{hour}:#{minute}:#{sec}"
         Logger.log(:debug, "#{exec_time} - #{__MODULE__} - checking")
+        Medicine.Check.check_function(check.module, :do_check, 1)
         new_check = %{do_check(check) | last_check_date: "#{year}-#{month}-#{day} #{hour}:#{minute}:#{sec}"}
         Medicine.ChecksRepository.updated_status(new_check)
       end
