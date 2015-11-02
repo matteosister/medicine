@@ -4,18 +4,17 @@ defmodule Medicine.HttpClient do
   """
   def ok?(url) do
     try do
-      response = get_response(url)
-      HTTPotion.Response.success?(response)
+      success? get_response(url)
     rescue
       HTTPotion.HTTPError -> false
     end
   end
 
-  def get_response(url) do
-    HTTPotion.get(url)
+  defp success?(response) do
+    HTTPotion.Response.success?(response)
   end
 
-  def success?(response) do
-    HTTPotion.Response.success?(response)
+  defp get_response(url) do
+    HTTPotion.get(url)
   end
 end

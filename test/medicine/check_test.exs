@@ -15,5 +15,5 @@ defmodule TestCheck do
   check "test_check", 10
   description "test check description"
 
-  def do_check(check), do: true
+  def do_check(_), do: true
 end

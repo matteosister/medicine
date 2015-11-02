@@ -9,6 +9,8 @@ defmodule Medicine.Check do
   """
   def new(module, status \\ :waiting) do
     check_function(module, :name, 0)
+    check_function(module, :frequency, 0)
+    check_function(module, :description, 0)
     %Medicine.Check{id: UUID.uuid4(), module: module, name: module.name,
       frequency: module.frequency, status: status,
       description: module.description}
