@@ -2,7 +2,14 @@ defmodule Medicine.HttpClient do
   @doc """
   given an url returns :ok for a status code of 20*, otherwise :error
   """
-  def ok?(url) do
+  def status(url) do
+    case ok?(url) do
+      true  -> :ok
+      false -> :error
+    end
+  end
+
+  defp ok?(url) do
     try do
       success? get_response(url)
     rescue

@@ -4,11 +4,7 @@ defmodule Medicine.CheckType.Url do
       @url Keyword.get(unquote(options), :url)
 
       def do_check(check) do
-        %{check|status: http_client.ok? (@url)}
-      end
-
-      defp http_client do
-        Application.get_env(:medicine, :http_client)
+        %{check|status: Medicine.CheckType.CheckHelper.http_client.status(@url)}
       end
     end
   end
