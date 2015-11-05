@@ -10,18 +10,13 @@ defmodule Medicine.HttpClient do
   end
 
   defp ok?(url) do
-    try do
-      success? get_response(url)
-    rescue
-      HTTPotion.HTTPError -> false
+    case get_response(url) do
+      {:ok, _} -> true
+      _        -> false
     end
   end
 
-  defp success?(response) do
-    HTTPotion.Response.success?(response)
-  end
-
-  defp get_response(url) do
-    HTTPotion.get(url)
+  def get_response(url) do
+    HTTPoison.get(url, ssl: true)
   end
 end
