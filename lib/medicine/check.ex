@@ -16,6 +16,15 @@ defmodule Medicine.Check do
       description: module.description}
   end
 
+  def set_last_update_time(check) do
+    %{check | last_check_date: exec_time}
+  end
+
+  def exec_time do
+    {{year, month, day}, {hour, minute, sec}} = :calendar.local_time()
+    "#{day}/#{month}/#{year} #{hour}:#{minute}:#{sec}"
+  end
+
   @doc """
   raise an exception if the function with the given arity doesn't
   exists in the given module
@@ -51,8 +60,10 @@ defmodule Medicine.Check do
         exec_time = "#{day}/#{month}/#{year} #{hour}:#{minute}:#{sec}"
         Logger.log(:debug, "#{exec_time} - #{__MODULE__} - checking")
         Medicine.Check.check_function(check.module, :do_check, 1)
-        new_check = %{do_check(check) | last_check_date: "#{year}-#{month}-#{day} #{hour}:#{minute}:#{sec}"}
-        Medicine.ChecksRepository.updated_status(new_check)
+        check
+        |> do_check
+        |> set_last_update_time
+        |> Medicine.ChecksRepository.updated_status
       end
     end
   end
@@ -68,10 +79,3 @@ defmodule Medicine.Check do
     end
   end
 end
-
-# defimpl Poison.Encoder, for: Medicine.Check do
-#   def encode(%Medicine.Check{id: id, name: name, status: status, description: description, last_check_date: last_check_date}, _options) do
-#     %{id: id, name: name, status: status, description: description, last_check_date: last_check_date}
-#     |> Poison.Encoder.encode([])
-#   end
-# end

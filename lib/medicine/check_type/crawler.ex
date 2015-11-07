@@ -1,17 +1,21 @@
 defmodule Medicine.CheckType.Crawler do
-  defmacro __using__(options) do
-    quote bind_quoted: [options: options] do
-      alias Medicine.CheckType.CheckHelper
+  defmacro __using__(_) do
+    quote do
+      import unquote(__MODULE__)
+      import Medicine.Check
+    end
+  end
 
-      @url Keyword.get(options, :url)
-      @search Keyword.get(options, :search)
-
+  defmacro crawl(check_url, opts) do
+    quote do
       def do_check(check) do
+        url = unquote(check_url)
+        options = unquote(opts)
         {:ok, %HTTPoison.Response{body: body}} =
-          CheckHelper.http_client.get_response(@url)
-        results = CheckHelper.get_text(body, @search[:selector])
-        is_contained = String.contains?(results, @search[:text])
-        %{check|status: CheckHelper.status(is_contained)}
+          Medicine.CheckType.CheckHelper.http_client.get_response(url)
+        results = Medicine.CheckType.CheckHelper.get_text(body, options[:in])
+        is_contained = String.contains?(results, options[:look_for])
+        %{check|status: Medicine.CheckType.CheckHelper.status(is_contained)}
       end
     end
   end
