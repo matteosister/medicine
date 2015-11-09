@@ -32,7 +32,7 @@ defmodule Medicine.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:httpoison, "~> 0.7.2"},
+    [{:httpoison, "~> 0.8"},
      {:uuid, "~> 1.0"},
      {:floki, "~> 0.7"}]
   end
